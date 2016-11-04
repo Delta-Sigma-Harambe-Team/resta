@@ -45,11 +45,11 @@ class Account(AbstractBaseUser,PermissionsMixin):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
-    '''
+    
     @property
     def is_superuser(self):
         return self.is_admin
-    
+    '''
     def has_perm(self, perm, obj=None):
         return self.is_admin
 
