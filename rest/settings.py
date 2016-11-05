@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'authentication.apps.AuthenticationConfig',
     'products.apps.ProductsConfig',
+    'menu.apps.MenuConfig',
 ]
 AUTH_USER_MODEL = 'authentication.Account'
 MIDDLEWARE_CLASSES = [
