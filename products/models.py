@@ -14,4 +14,4 @@ class Resource(models.Model):
         return '{0}'.format(self.content)
 
     def __unicode__(self):
-        return '%s En Stock: %sg $%s/Kg'%(self.name,self.amount,self.price)
+        return '%s En Stock: %sg'%(self.name,self.amount)

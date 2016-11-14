@@ -12,7 +12,9 @@ STATUS_CHOICES = {"Cocina":COCINA,'Bar':BAR}
 STATUS_CODES = ((COCINA, "Cocina"),(BAR, "Bar"))  
 # Create your models here.
 class Recipe(models.Model): 
-    preparation_time = models.IntegerField(blank=False,verbose_name='Tiempo de preparacion en minutos')   
+    name = models.CharField(max_length=140,blank=False)          
+    
+    preparation_time = models.IntegerField(blank=False,verbose_name='Min de preparacion')   
     area = models.IntegerField(choices=STATUS_CODES,default=COCINA)
 
     amount = models.DecimalField(max_digits = 30,decimal_places=2,default=0.0,verbose_name='Costo del platillo')
@@ -22,21 +24,34 @@ class Recipe(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def __unicode__(self):
-        return '{0}'.format(self.content)
-
-    def __unicode__(self):
-        return '%s @ %s'%(self.name,self.address)
-
 class ResourceRecipe(models.Model):
     recipe = models.ForeignKey(Recipe,null=False,blank=False)
     ingredient = models.ForeignKey(Resource,null=False,blank=False)    
     amount = models.DecimalField(max_digits = 10, decimal_places=2, blank=False,verbose_name='Cantidad en gramos')
 
     def __unicode__(self):
-        return '%s %s %s'%(self.order,self.item, self.amount)
+        return '%s %s %s'%(self.recipe,self.ingredient, self.amount)
 
+class Combo(models.Model):
+    """
+    Description: Paquete que tiene multiples platillos
+    """
+    name   = models.CharField(max_length=140, blank=False)          
+    
+    recipes = models.ManyToManyField(Recipe, through='ComboRecipe',blank=False)
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    def __unicode__(self):
+        return name
 
-
-
+class ComboRecipe(models.Model):
+    """
+    Description: Relacion entre un platillo y un combo
+    """
+    combo = models.ForeignKey(Combo,null=False,blank=False)
+    recipe = models.ForeignKey(Recipe,null=False,blank=False)    
+    
+    def __unicode__(self):
+        return '%s %s'%(self.combo,self.recipe)
+    
