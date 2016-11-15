@@ -69,6 +69,9 @@ ACTIVE,FINISHED = 0,1
 STATUS_CHOICES = ((ACTIVE, "Active"),(FINISHED, "Finished"))  
 STATUS_CODES = {"Active":ACTIVE,'Finished':FINISHED}
 
+PAYMENT_METHODS = ((ACTIVE, "Efectivo"),(FINISHED, "Debito"))
+PAYMENT_CODES = {"Efectivo":ACTIVE,'Debito':FINISHED}
+
 class Order(models.Model):
     """
     Description: Relaciona Order
@@ -80,6 +83,9 @@ class Order(models.Model):
     status = models.IntegerField(choices=STATUS_CHOICES,default=ACTIVE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return '%s'%(self.table)
     
 class OrderRecipe(models.Model):
     """
@@ -98,6 +104,13 @@ class OrderMenu(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-
+class Payment(models.Model):
+    """
+    Description: Payment Description
+    """
+    order = models.ForeignKey(Order,null=True,blank=False)
+    amount = models.DecimalField(max_digits = 30,decimal_places=2,default=0.0,verbose_name='Monto pagado')
+    method = models.IntegerField(choices=PAYMENT_METHODS,default=ACTIVE)    
+    
 
 

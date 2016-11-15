@@ -48,3 +48,6 @@ class AdminCombo(admin.ModelAdmin):
 class AdminTable(admin.ModelAdmin):
     icon = '<i class="material-icons">dns</i>'
 
+@admin.register(Payment)
+class AdminPayment(admin.ModelAdmin):
+    icon = '<i class="material-icons">dns</i>'
