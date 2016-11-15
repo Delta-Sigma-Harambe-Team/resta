@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'authentication.apps.AuthenticationConfig',
     'products.apps.ProductsConfig',
     'menu.apps.MenuConfig',
+    'rest_framework',
 ]
 AUTH_USER_MODEL = 'authentication.Account'
 MIDDLEWARE_CLASSES = [
