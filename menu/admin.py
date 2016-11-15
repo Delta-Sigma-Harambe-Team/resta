@@ -40,7 +40,7 @@ class AdminCombo(admin.ModelAdmin):
     icon = '<i class="material-icons">dns</i>'
     list_display = ('id','status','table')
     list_filter = ('status',)
-    readonly_fields=('cost',)
+    readonly_fields=('cost','status',)
     
     inlines = (OrderCombosInline,OrderRecipeInline,)
 

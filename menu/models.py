@@ -41,7 +41,7 @@ class Combo(models.Model):
     Description: Paquete que tiene multiples platillos
     """
     name   = models.CharField(max_length=140, blank=False)          
-    
+    cost = models.DecimalField(max_digits = 30,decimal_places=2,default=0.0,verbose_name='Costo del combo')
     recipes = models.ManyToManyField(Recipe, through='ComboRecipe',blank=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -65,9 +65,12 @@ class Table(models.Model):
     def __unicode__(self):
         return '#%s By %s'%(self.id,self.waiter.first_name)
 
-ACTIVE,FINISHED = 0,1
-STATUS_CHOICES = ((ACTIVE, "Active"),(FINISHED, "Finished"))  
-STATUS_CODES = {"Active":ACTIVE,'Finished':FINISHED}
+ACTIVE,FINISHED,WAITING = 0,1,2
+STATUS_CHOICES = ((ACTIVE, "Active"),(FINISHED, "Finished"),(WAITING,"Pending"))  
+STATUS_CODES = {"Active":ACTIVE,'Finished':FINISHED,"Pending":WAITING}
+
+PAYMENT_STATUS = ((ACTIVE, "Success"),(FINISHED, "Failed"))
+PAYMENT_CODES = {'Success':ACTIVE,"Failed":FINISHED}
 
 PAYMENT_METHODS = ((ACTIVE, "Efectivo"),(FINISHED, "Debito"))
 PAYMENT_CODES = {"Efectivo":ACTIVE,'Debito':FINISHED}
@@ -80,7 +83,7 @@ class Order(models.Model):
     recipes = models.ManyToManyField(Recipe, through='OrderRecipe',blank=True)
     combo = models.ManyToManyField(Combo, through='OrderMenu',blank=True)
     table = models.ForeignKey(Table, blank=False,null=False)
-    status = models.IntegerField(choices=STATUS_CHOICES,default=ACTIVE)
+    status = models.IntegerField(choices=STATUS_CHOICES,default=WAITING)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -110,7 +113,42 @@ class Payment(models.Model):
     """
     order = models.ForeignKey(Order,null=True,blank=False)
     amount = models.DecimalField(max_digits = 30,decimal_places=2,default=0.0,verbose_name='Monto pagado')
-    method = models.IntegerField(choices=PAYMENT_METHODS,default=ACTIVE)    
-    
+    method = models.IntegerField(choices=PAYMENT_METHODS,default=ACTIVE)
+    status = models.IntegerField(choices=PAYMENT_STATUS,default=ACTIVE)
 
+@receiver(post_save,sender=OrderMenu) 
+def PostSave_OrderMenu(sender,instance,*args, **kwargs):
+    i_order = instance.order 
+    i_order.cost = i_order.cost + instance.combo.cost*instance.amount
+    i_order.save()
 
+@receiver(post_delete,sender=OrderMenu) 
+def PostDelete_OrderMenu(sender,instance,*args, **kwargs):
+    i_order = instance.order 
+    i_order.cost = i_order.cost - instance.combo.cost*instance.amount
+    i_order.save()
+
+@receiver(post_save,sender=OrderRecipe) 
+def PostSave_OrderRecipe(sender,instance,*args, **kwargs):
+    i_order = instance.order 
+    i_order.cost = i_order.cost+instance.recipe.amount*instance.amount
+    i_order.save()
+
+@receiver(post_delete,sender=OrderRecipe) 
+def PostDelete_OrderRecipe(sender,instance,*args, **kwargs):
+    i_order = instance.order 
+    i_order.cost = i_order.cost - instance.recipe.amount*instance.amount
+    i_order.save()
+
+@receiver(pre_save,sender=Payment) #No podemos agregar pagos a una orden cancelada 
+def PreSave_Payment(sender,instance,*args, **kwargs):
+    if instance.order.status == FINISHED:
+        raise Exception("No se pueden agregar pagos a una orden finalizada")
+
+@receiver(post_save,sender=Payment) #Si hacen un update de un pago no servira mas 
+def PostSave_Payment(sender,instance,*args, **kwargs):
+    related_order = instance.order
+    related_order.cost -= instance.amount
+    if related_order.cost <= 0: #Si ya no requiere mas pagos updatear a finished
+        related_order.status = FINISHED
+    related_order.save()
