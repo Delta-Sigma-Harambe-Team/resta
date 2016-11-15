@@ -25,7 +25,6 @@ class AdminOrder(admin.ModelAdmin):
     icon = '<i class="material-icons">dns</i>'
     list_display = ('name','preparation_time','area' ,'amount','created_at','updated_at')
     list_filter = ('preparation_time','name')
-    #readonly_fields=('amount',)
     inlines = (TermInlineAdmin,)
 
 @admin.register(Combo)
@@ -39,8 +38,10 @@ class AdminCombo(admin.ModelAdmin):
 @admin.register(Order)
 class AdminCombo(admin.ModelAdmin):
     icon = '<i class="material-icons">dns</i>'
-    list_display = ('id','status')
-    list_filter = ('id','status')
+    list_display = ('id','status','table')
+    list_filter = ('status',)
+    readonly_fields=('cost',)
+    
     inlines = (OrderCombosInline,OrderRecipeInline,)
 
 @admin.register(Table)

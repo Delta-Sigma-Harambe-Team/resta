@@ -73,9 +73,10 @@ class Order(models.Model):
     """
     Description: Relaciona Order
     """
+    cost = models.DecimalField(max_digits = 30,decimal_places=2,default=0.0,verbose_name='Costo de la Orden')
     recipes = models.ManyToManyField(Recipe, through='OrderRecipe',blank=True)
     combo = models.ManyToManyField(Combo, through='OrderMenu',blank=True)
-    #table = models.ForeignKey(Table, default=None)
+    table = models.ForeignKey(Table, blank=False,null=False)
     status = models.IntegerField(choices=STATUS_CHOICES,default=ACTIVE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
