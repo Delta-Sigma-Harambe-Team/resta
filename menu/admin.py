@@ -9,12 +9,16 @@ class ComboRecipeInLine(admin.StackedInline): # TabularInline
     model = Combo.recipes.through
     extra=0
 
-# Register your models here.
-@admin.register(ResourceRecipe)
-class AdminOrderItem(admin.ModelAdmin):
-    icon = '<i class="material-icons">http</i>'
-    list_display = ('recipe', 'ingredient','amount')
-    list_filter = ('recipe','amount')
+class OrderCombosInline(admin.StackedInline): # TabularInline
+    model = Order.recipes.through
+    extra=0
+class OrderRecipeInline(admin.StackedInline): # TabularInline
+    model = Order.combo.through
+    extra=0
+
+class CurrentOrdersInLine(admin.StackedInline):
+    model = Table
+    extra = 0
 
 @admin.register(Recipe)
 class AdminOrder(admin.ModelAdmin):
@@ -31,4 +35,15 @@ class AdminCombo(admin.ModelAdmin):
     list_filter = ('name',)
 
     inlines = (ComboRecipeInLine,)
-    
+
+@admin.register(Order)
+class AdminCombo(admin.ModelAdmin):
+    icon = '<i class="material-icons">dns</i>'
+    list_display = ('id','status')
+    list_filter = ('id','status')
+    inlines = (OrderCombosInline,OrderRecipeInline,)
+
+@admin.register(Table)
+class AdminTable(admin.ModelAdmin):
+    icon = '<i class="material-icons">dns</i>'
+
