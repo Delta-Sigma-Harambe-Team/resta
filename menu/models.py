@@ -28,6 +28,16 @@ class Recipe(models.Model):
     def __unicode__(self):
         return self.name
 
+    def isAvailable(self):
+        query = ResourceRecipe.objects.filter(recipe=self)
+
+        for item in query: #Nos devuelve un ResourceRecipe
+            print item.amount
+            print item.ingredient
+            print 
+
+        return False
+
 class ResourceRecipe(models.Model):
     recipe = models.ForeignKey(Recipe,null=False,blank=False)
     ingredient = models.ForeignKey(Resource,null=False,blank=False)    
@@ -136,6 +146,9 @@ def PostSave_OrderRecipe(sender,instance,*args, **kwargs):
 
 @receiver(post_delete,sender=OrderRecipe) 
 def PostDelete_OrderRecipe(sender,instance,*args, **kwargs):
+    if instance.recipe.isAvailable():
+        print 'ESTA DISPONIBLE'
+
     i_order = instance.order 
     i_order.cost = i_order.cost - instance.recipe.amount*instance.amount
     i_order.save()
@@ -144,7 +157,7 @@ def PostDelete_OrderRecipe(sender,instance,*args, **kwargs):
 def PreSave_Payment(sender,instance,*args, **kwargs):
     if instance.order.status == FINISHED:
         raise Exception("No se pueden agregar pagos a una orden finalizada")
-
+            
 @receiver(post_save,sender=Payment) #Si hacen un update de un pago no servira mas 
 def PostSave_Payment(sender,instance,*args, **kwargs):
     related_order = instance.order
