@@ -1,0 +1,19 @@
+<ul class="nav navbar-nav pull-right">
+   
+</ul>
+
+<script type="text/javascript">
+	console.log("Welcome fam");
+	$.ajax({
+	    	url: '/api/v1/products/',
+	    	headers: {'X-CSRFToken': getCookie('csrftoken'),'Content-Type':'application/json'},
+	    method: 'GET',
+	    contentType: 'application/json; charset=UTF-8',
+    	dataType: 'json',
+	    data: JSON.stringify({}),
+	    success: function(data)
+	    	{
+	    		console.log(data);
+		    }
+	  	});
+</script>

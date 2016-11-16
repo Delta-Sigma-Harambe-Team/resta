@@ -18,6 +18,7 @@ class LogoutView(views.APIView):
 
 class LoginView(views.APIView):
     def post(self, request, format=None):
+        print request.body
         data = json.loads(request.body)
 
         email = data.get('email', None)

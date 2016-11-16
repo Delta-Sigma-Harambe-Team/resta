@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Restaurante</title>
+
+  <base href="/" />
+  {% include 'javascripts.html' %}
+  {% include 'stylesheets.html' %}
+</head>
+
+<body>
+  {% include 'navbar.html' %}
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xs-12" id="main_div"></div>
+        {% if user.is_authenticated %}
+          {% include 'other.html' %}
+        {% else %}
+          {% include 'login.html' %}
+        {% endif %}
+    </div>
+  </div>
+
+</body>
+</html>
