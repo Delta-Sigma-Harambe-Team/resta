@@ -5,11 +5,12 @@ from rest_framework import status
 import requests
 class Products(APIView):
     """
-    Observa y pide mas pedidos al almacen
+    Observa y pide mas productos al almacen
     """
     def get(self, request, format=None): #Proxy to almacen
         r = requests.get('http://localhost:8001/api/v1/products/')
         return Response(r.json())
 
-    def post(self, request, format=None):
-        pass
+    def post(self, request, format=None):       
+        r = requests.post("http://localhost:8001/api/v1/orders/", json=request.data['data'])
+        return Response(r.json())
