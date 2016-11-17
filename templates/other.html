@@ -1,9 +1,67 @@
-<ul class="nav navbar-nav pull-right">
-   
+<!--RESTRINGIR CON PERMISOS-->
+
+<h1>Disponibles en el almacen: (Costo x kg)</h1>
+<ul id='items'>
+	
 </ul>
 
+<button onclick="ordenarAlmacen()">Pedir al almacen</button>
+
 <script type="text/javascript">
-	console.log("Welcome fam");
+	
+	function ordenarAlmacen()
+	{
+		var itemsToORder = [];
+		var ins = $('input');
+		var amount = 0;
+		
+		for (var i = 0 ; i < ins.length; ++i) 
+		{
+			if(ins[i].value!='' && !isNaN(ins[i].value) && ins[i].value>0)
+			{
+				var parent = ins[i].parentElement;
+				var cost = $('#cost'+parent.id).text();
+
+				var currentItem = 
+				{
+					'amount':ins[i].value,
+					'item':{"id":parent.id,}
+				};
+
+				itemsToORder.push(currentItem);
+				amount += Number(ins[i].value*cost);
+			}
+		}
+
+		if (itemsToORder!=[])
+		{
+			if (confirm('Seguro quiere hacer un pedido por un total de $'+amount+'?')) 
+			{
+				var data = {"requester": "70e9debf-c746-4373-b143-8452796a2ff1",'items':itemsToORder}
+
+				$.ajax({
+			    	url: '/api/v1/products/',
+			    	headers: {'X-CSRFToken': getCookie('csrftoken'),'Content-Type':'application/json'},
+				    method: 'POST',
+				    contentType: 'application/json; charset=UTF-8',
+			    	dataType: 'json',
+				    data: JSON.stringify({data}),
+				    success: function(data)
+				    	{
+				    		console.log(data);
+					    }
+				  	});
+			} else 
+			{
+		    	// Do nothing!
+			}
+		}
+		
+	}
+
+</script>
+
+<script type="text/javascript">
 	$.ajax({
 	    	url: '/api/v1/products/',
 	    	headers: {'X-CSRFToken': getCookie('csrftoken'),'Content-Type':'application/json'},
@@ -13,7 +71,17 @@
 	    data: JSON.stringify({}),
 	    success: function(data)
 	    	{
-	    		console.log(data);
+	    		lst = $('#items')
+	    		data.forEach(addToList)
+		    
+		    	function addToList(item, index)
+				{
+					lst.append("<li id='"+item.id+"'>"+
+									item.name+"<br><span>"+
+									(item.amount/1000).toFixed(2)+"kg x $</span>"
+						+"<span id=cost"+item.id+">"+item.price+
+						"</span>cdu<input placeholder='Cantidad de kilos' type='text'></li>")
+				}
 		    }
 	  	});
 </script>
