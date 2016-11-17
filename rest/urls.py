@@ -21,5 +21,6 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include('authentication.urls', namespace='auth')),
+    url(r'^', include('products.urls', namespace='products')),
     url('^.*$', IndexView.as_view(), name='index'),
 ]

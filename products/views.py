@@ -1,16 +1,15 @@
-from rest_framework import permissions, viewsets
+from django.http import Http404
+from rest_framework.views import APIView
 from rest_framework.response import Response
-from products.models import Resource
-from products.serializers import ResourceSerializer
+from rest_framework import status
+import requests
+class Products(APIView):
+    """
+    Observa y pide mas pedidos al almacen
+    """
+    def get(self, request, format=None): #Proxy to almacen
+        r = requests.get('http://localhost:8001/api/v1/products/')
+        return Response(r.json())
 
-class ResourceViewSet(viewsets.ModelViewSet):
-    queryset = Resource.objects.order_by('-created_at')  #Obligatorio
-    serializer_class = ResourceSerializer
-
-    def get_permissions(self):
-        if self.request.method in permissions.SAFE_METHODS: return (permissions.AllowAny(),)
-        return (permissions.IsAuthenticated(),)
-
-    def perform_create(self, serializer):
-        instance = serializer.save()#author=self.request.user)
-        return super(ResourceViewSet, self).perform_create(serializer)
+    def post(self, request, format=None):
+        pass

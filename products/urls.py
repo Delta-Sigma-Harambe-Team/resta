@@ -1,10 +1,7 @@
 from django.conf.urls import url, include
 from rest_framework_nested import routers
-from products.views import ResourceViewSet
-
-router = routers.SimpleRouter()
-router.register(r'products', ResourceViewSet)
+from .views import *
 
 urlpatterns = [
-	url(r'^api/v1/', include(router.urls)),
+	url(r'^api/v1/products', Products.as_view()),
 ]
