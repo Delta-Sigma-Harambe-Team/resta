@@ -4,4 +4,4 @@ from material.frontend.apps import ModuleMixin
 
 class MenuConfig(ModuleMixin, AppConfig):
     name = 'menu'
-    icon = '<i class="material-icons">shopping_cart</i>'
+    icon = '<i class="material-icons">store_mall_directory</i>'

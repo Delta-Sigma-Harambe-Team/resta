@@ -22,14 +22,14 @@ class CurrentOrdersInLine(admin.StackedInline):
 
 @admin.register(Recipe)
 class AdminOrder(admin.ModelAdmin):
-    icon = '<i class="material-icons">dns</i>'
+    icon = '<i class="material-icons">kitchen</i>'
     list_display = ('name','preparation_time','area' ,'amount','created_at','updated_at')
     list_filter = ('preparation_time','name')
     inlines = (TermInlineAdmin,)
 
 @admin.register(Combo)
 class AdminCombo(admin.ModelAdmin):
-    icon = '<i class="material-icons">dns</i>'
+    icon = '<i class="material-icons">local_dining</i>'
     list_display = ('name',)
     list_filter = ('name',)
 
@@ -37,7 +37,7 @@ class AdminCombo(admin.ModelAdmin):
 
 @admin.register(Order)
 class AdminCombo(admin.ModelAdmin):
-    icon = '<i class="material-icons">dns</i>'
+    icon = '<i class="material-icons">receipt</i>'
     list_display = ('id','status','table')
     list_filter = ('status',)
     readonly_fields=('cost','status',)
@@ -46,8 +46,8 @@ class AdminCombo(admin.ModelAdmin):
 
 @admin.register(Table)
 class AdminTable(admin.ModelAdmin):
-    icon = '<i class="material-icons">dns</i>'
+    icon = '<i class="material-icons">room_service</i>'
 
 @admin.register(Payment)
 class AdminPayment(admin.ModelAdmin):
-    icon = '<i class="material-icons">dns</i>'
+    icon = '<i class="material-icons">payment</i>'
