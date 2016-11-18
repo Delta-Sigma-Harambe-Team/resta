@@ -129,19 +129,19 @@ class Payment(models.Model):
 @receiver(post_save,sender=OrderMenu) 
 def PostSave_OrderMenu(sender,instance,*args, **kwargs):
     i_order = instance.order 
-    i_order.cost = i_order.cost + instance.combo.cost*instance.amount
+    i_order.cost = float(i_order.cost) + float(instance.combo.cost*instance.amount)
     i_order.save()
 
 @receiver(post_delete,sender=OrderMenu) 
 def PostDelete_OrderMenu(sender,instance,*args, **kwargs):
     i_order = instance.order 
-    i_order.cost = i_order.cost - instance.combo.cost*instance.amount
+    i_order.cost = float(i_order.cost) - float(instance.combo.cost*instance.amount)
     i_order.save()
 
 @receiver(post_save,sender=OrderRecipe) 
 def PostSave_OrderRecipe(sender,instance,*args, **kwargs):
     i_order = instance.order 
-    i_order.cost = i_order.cost+instance.recipe.amount*instance.amount
+    i_order.cost = float(i_order.cost)+float(instance.recipe.amount*instance.amount)
     i_order.save()
 
 @receiver(post_delete,sender=OrderRecipe) 
@@ -150,7 +150,7 @@ def PostDelete_OrderRecipe(sender,instance,*args, **kwargs):
         print 'ESTA DISPONIBLE'
 
     i_order = instance.order 
-    i_order.cost = i_order.cost - instance.recipe.amount*instance.amount
+    i_order.cost = float(i_order.cost) - float(instance.recipe.amount*instance.amount)
     i_order.save()
 
 @receiver(pre_save,sender=Payment) #No podemos agregar pagos a una orden cancelada 
@@ -161,7 +161,7 @@ def PreSave_Payment(sender,instance,*args, **kwargs):
 @receiver(post_save,sender=Payment) #Si hacen un update de un pago no servira mas 
 def PostSave_Payment(sender,instance,*args, **kwargs):
     related_order = instance.order
-    related_order.cost -= instance.amount
+    related_order.cost = float(related_order.cost)-float(instance.amount)
     if related_order.cost <= 0: #Si ya no requiere mas pagos updatear a finished
         related_order.status = FINISHED
     related_order.save()
