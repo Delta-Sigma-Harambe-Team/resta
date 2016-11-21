@@ -98,7 +98,8 @@ class Order(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return '%s'%(self.table)
+        return '%s $%s'%(self.table,self.cost)
+
     
 class OrderRecipe(models.Model):
     """
@@ -125,6 +126,12 @@ class Payment(models.Model):
     amount = models.DecimalField(max_digits = 30,decimal_places=2,default=0.0,verbose_name='Monto pagado')
     method = models.IntegerField(choices=PAYMENT_METHODS,default=ACTIVE)
     status = models.IntegerField(choices=PAYMENT_STATUS,default=ACTIVE)
+
+    def __unicode__(self):
+        return '%s Pending: %s Paid: %s'%(self.order,self.order.cost,self.amount)
+'''
+Cuando la orden se pasa a activo se debe restar de almacen, si se modifica un pago que no actualice 
+'''
 
 @receiver(post_save,sender=OrderMenu) 
 def PostSave_OrderMenu(sender,instance,*args, **kwargs):
@@ -155,6 +162,8 @@ def PostDelete_OrderRecipe(sender,instance,*args, **kwargs):
 
 @receiver(pre_save,sender=Payment) #No podemos agregar pagos a una orden cancelada 
 def PreSave_Payment(sender,instance,*args, **kwargs):
+    if instance.order.status == WAITING:
+        raise Exception("Debe estar en status activo la orden")
     if instance.order.status == FINISHED:
         raise Exception("No se pueden agregar pagos a una orden finalizada")
             
