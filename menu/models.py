@@ -30,13 +30,11 @@ class Recipe(models.Model):
 
     def isAvailable(self):
         query = ResourceRecipe.objects.filter(recipe=self)
-
         for item in query: #Nos devuelve un ResourceRecipe
             print item.amount
             print item.ingredient
-            print 
-
-        return False
+            item.red()
+        return item.availability
 
 class ResourceRecipe(models.Model):
     recipe = models.ForeignKey(Recipe,null=False,blank=False)
@@ -174,3 +172,13 @@ def PostSave_Payment(sender,instance,*args, **kwargs):
     if related_order.cost <= 0: #Si ya no requiere mas pagos updatear a finished
         related_order.status = FINISHED
     related_order.save()
+'''
+area = 1 #1 is bar
+for i in Order.objects.filter(status=0):#Activas
+    for r in i.combo.all():
+        for j in r.recipes.all():
+            print j 
+    for r in i.recipes.all(): 
+        if r.area == area:
+            print r
+'''
